@@ -152,17 +152,7 @@ Veuillez replacer les pastilles pour reconstituer un dégradé progressif.
 <div id="test"></div>
 
 <div class="form">
-
-  <p><strong>Lieu du test :</strong></p>
-
-  <select id="lieu">
-    <option value="">-- Sélectionner un site --</option>
-    <option value="Grillon">Grillon</option>
-    <option value="Saint-Paul-3-Châteaux">Saint-Paul-3-Châteaux</option>
-  </select>
-
-  <br><br>
-
+  
   <input id="nom" placeholder="Nom">
   <input id="prenom" placeholder="Prénom">
 
@@ -299,11 +289,11 @@ function sendToExcel(score){
     lieu: document.getElementById("lieu").value
   };
 
-  fetch("https://script.google.com/macros/s/AKfycbyzJ8WPtFQW-I8oK1HgJSHEmXnh9Cpz28FIpMBs57ivSUMQTQelxbMgVYiflnbSdvo6/exec", {
-    method: "POST",
-    mode: "no-cors",
-    body: JSON.stringify(data)
-  });
+  fetch("https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnTrtt07UZ1VJWcUybdGVdrRAMGc6ox6LLekb6PnYVoqMo7oRxtCKyO2Rz5I_knIhldYdeeBqNupaUbD5w9vY_jcR2ZjZEU_I68QwMifYh43tnqr0vDplkcOuPfrzWlhpy7LOkoTXJVU1bfbM4wT-gqIodOBGWP9vuESTyXinfXONcEKHu2qdFsuHkvXEP00eIE_NKp9Kn5z94J0J6Ssjh_Qp7FxfdDBTALP786eAGIiUf2-X5S7S2jIAWpOVda6RQexS69s2hvAvHddur16aw9VZ0gNHQ&lib=M9CCRG_6FKY-UIBu6ebALMKKr128tNxL1", {
+  method: "POST",
+  mode: "no-cors",
+  body: JSON.stringify(data)
+});
 
 }
 
