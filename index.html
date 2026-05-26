@@ -817,18 +817,25 @@ function sendToSheets(score) {
     .catch(err => console.error(err));
 }
 
-function resetTest() {
-  buildTest();
-  document.getElementById("result").style.display = "none";
-  document.getElementById("result").innerHTML = "";
-  document.getElementById("btnValider").disabled = false;
-  document.getElementById("btnValider").textContent = "Valider le test";
-  document.getElementById("btnRecommencer").style.display = "none";
-  document.getElementById("nom").value = "";
-  document.getElementById("prenom").value = "";
-  document.getElementById("lieu").value = "";
-  updateProgress(10);
-  updateSteps(1);
+function sendToExcel(score) {
+
+  let now = new Date();
+
+  let data = {
+    nom: document.getElementById("nom").value,
+    prenom: document.getElementById("prenom").value,
+    score: score,
+    date: now.toLocaleDateString(),
+    heure: now.toLocaleTimeString(),
+    lieu: document.getElementById("lieu").value
+  };
+
+  let url = "https://script.google.com/macros/s/AKfycbyUVOkFMsrHLsGvSdDNWimkrCs23hjx8nP8dyGNjk2GkKLSPSGKxoBMDPBOHOr8AHNS/exec";
+
+  fetch(url + "?callback=ok&" + new URLSearchParams(data))
+    .then(res => res.text())
+    .then(txt => console.log("Réponse :", txt))
+    .catch(err => console.error("Erreur :", err));
 }
 </script>
 </body>
