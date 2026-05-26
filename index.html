@@ -6,10 +6,11 @@
 
 <style>
 
+/* GLOBAL */
 body {
-  font-family: "Segoe UI", sans-serif;
   margin: 0;
-  background: linear-gradient(120deg, #eef3f9, #dbe5f1);
+  font-family: "Segoe UI", Arial;
+  background: linear-gradient(135deg, #f5f7fa, #cfd9df);
 }
 
 /* HEADER */
@@ -18,7 +19,7 @@ header {
   color: white;
   text-align: center;
   padding: 25px;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 }
 
 header img {
@@ -41,7 +42,7 @@ header h1 {
   background: white;
   padding: 30px;
   border-radius: 15px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
 }
 
 /* TEXT */
@@ -71,7 +72,7 @@ header h1 {
 
 .color:hover {
   transform: scale(1.15);
-  box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 }
 
 .fixed {
@@ -79,37 +80,43 @@ header h1 {
   cursor: default;
 }
 
-/* FORM STYLE */
+/* FORM */
 .form {
   text-align: center;
   margin-top: 20px;
 }
 
-select, input {
+input, select {
   padding: 12px;
-  margin: 5px;
-  border-radius: 8px;
+  margin: 6px;
+  border-radius: 10px;
   border: 1px solid #ccc;
-  font-size: 14px;
   width: 220px;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+input:focus, select:focus {
+  border-color: #0073e6;
+  outline: none;
 }
 
 /* BUTTON */
 button {
-  margin-top: 15px;
-  padding: 14px 30px;
+  margin-top: 20px;
+  padding: 14px 35px;
   border: none;
-  border-radius: 8px;
-  background: linear-gradient(90deg, #002b5c, #0051a8);
+  border-radius: 10px;
+  background: linear-gradient(90deg, #002b5c, #0073e6);
   color: white;
+  font-size: 16px;
   cursor: pointer;
-  font-size: 15px;
   transition: 0.3s;
 }
 
 button:hover {
-  background: linear-gradient(90deg, #0051a8, #007bff);
-  transform: translateY(-2px);
+  background: linear-gradient(90deg, #0073e6, #00aaff);
+  transform: translateY(-3px);
 }
 
 /* RESULT */
@@ -126,7 +133,7 @@ button:hover {
 <body>
 
 <header>
-  https://upload.wikimedia.org/wikipedia/commons/3/3c/Gerflor_logo.svg
+  <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Gerflor_logo.svg">
   <h1>Test de perception des couleurs</h1>
 </header>
 
@@ -134,7 +141,8 @@ button:hover {
 <div class="card">
 
 <p class="description">
-Réorganisez les pastilles pour reconstituer un dégradé cohérent entre les extrémités fixes.
+Ce test permet d’évaluer votre capacité à distinguer les nuances de couleurs.<br>
+Veuillez replacer les pastilles pour reconstituer un dégradé progressif.
 </p>
 
 <div id="test"></div>
@@ -157,7 +165,7 @@ Réorganisez les pastilles pour reconstituer un dégradé cohérent entre les ex
 </div>
 
 <div style="text-align:center;">
-  <button onclick="check()">Valider</button>
+  <button onclick="check()">Valider le test</button>
 </div>
 
 <div id="result"></div>
@@ -170,11 +178,13 @@ Réorganisez les pastilles pour reconstituer un dégradé cohérent entre les ex
 let rowsData = [];
 let dragged;
 let lastScore = 0;
+
 let testDiv = document.getElementById("test");
 
 let starts = [0, 72, 144, 216, 288];
 
 function createRow(startHue) {
+
   let row = document.createElement("div");
   row.className = "row";
 
@@ -190,6 +200,7 @@ function createRow(startHue) {
   let middle = hues.slice(1, -1).sort(() => Math.random() - 0.5);
 
   function createColor(hue, fixed = false) {
+
     let div = document.createElement("div");
     div.className = "color";
 
@@ -203,15 +214,17 @@ function createRow(startHue) {
     div.addEventListener("dragover", e => e.preventDefault());
 
     div.addEventListener("drop", () => {
+
       if (div !== dragged && !div.classList.contains("fixed")) {
 
-        let temp = div.dataset.hue;
+        let tempHue = div.dataset.hue;
 
         div.dataset.hue = dragged.dataset.hue;
-        dragged.dataset.hue = temp;
+        dragged.dataset.hue = tempHue;
 
         div.style.background = `hsl(${div.dataset.hue},100%,50%)`;
         dragged.style.background = `hsl(${dragged.dataset.hue},100%,50%)`;
+
       }
     });
 
@@ -244,13 +257,16 @@ function check() {
   let total = 0;
 
   rowsData.forEach(r => {
+
     let items = r.row.querySelectorAll(".color");
 
     items.forEach((el, i) => {
+
       let hue = parseInt(el.dataset.hue);
       total++;
 
       if (Math.abs(hue - r.hues[i]) < 5) score++;
+
     });
   });
 
@@ -291,4 +307,3 @@ function sendToExcel(score){
 
 </body>
 </html>
-``
