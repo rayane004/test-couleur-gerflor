@@ -5,17 +5,20 @@
 <title>Test Farnsworth - GERFLOR</title>
 
 <style>
+
 body {
   font-family: "Segoe UI", sans-serif;
   margin: 0;
-  background: linear-gradient(120deg, #eef3f9, #dde6f2);
+  background: linear-gradient(120deg, #eef3f9, #dbe5f1);
 }
 
+/* HEADER */
 header {
   background: linear-gradient(90deg, #002b5c, #0051a8);
   color: white;
   text-align: center;
   padding: 25px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.2);
 }
 
 header img {
@@ -23,36 +26,52 @@ header img {
   margin-bottom: 10px;
 }
 
+header h1 {
+  margin: 0;
+}
+
+/* CONTAINER */
 .container {
   max-width: 1100px;
   margin: 40px auto;
 }
 
+/* CARD */
 .card {
   background: white;
   padding: 30px;
   border-radius: 15px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
 }
 
+/* TEXT */
 .description {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
   color: #444;
+  line-height: 1.5;
 }
 
+/* ROW */
 .row {
   display: flex;
   justify-content: center;
   margin: 12px 0;
 }
 
+/* COLORS */
 .color {
   width: 34px;
   height: 34px;
   border-radius: 50%;
   margin: 4px;
   cursor: grab;
+  transition: 0.2s;
+}
+
+.color:hover {
+  transform: scale(1.15);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.2);
 }
 
 .fixed {
@@ -60,37 +79,54 @@ header img {
   cursor: default;
 }
 
-input {
+/* FORM STYLE */
+.form {
+  text-align: center;
+  margin-top: 20px;
+}
+
+select, input {
   padding: 12px;
   margin: 5px;
   border-radius: 8px;
   border: 1px solid #ccc;
+  font-size: 14px;
+  width: 220px;
 }
 
+/* BUTTON */
 button {
   margin-top: 15px;
-  padding: 12px 25px;
+  padding: 14px 30px;
   border: none;
   border-radius: 8px;
   background: linear-gradient(90deg, #002b5c, #0051a8);
   color: white;
   cursor: pointer;
+  font-size: 15px;
+  transition: 0.3s;
 }
 
+button:hover {
+  background: linear-gradient(90deg, #0051a8, #007bff);
+  transform: translateY(-2px);
+}
+
+/* RESULT */
 #result {
   margin-top: 20px;
   text-align: center;
-  font-size: 22px;
+  font-size: 24px;
   font-weight: bold;
 }
+
 </style>
 </head>
 
 <body>
 
 <header>
-  <!-- ✅ LOGO EN LIGNE -->
-  <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Gerflor_logo.svg">
+  https://upload.wikimedia.org/wikipedia/commons/3/3c/Gerflor_logo.svg
   <h1>Test de perception des couleurs</h1>
 </header>
 
@@ -98,13 +134,12 @@ button {
 <div class="card">
 
 <p class="description">
-Réorganisez les pastilles pour reconstituer un dégradé cohérent.
+Réorganisez les pastilles pour reconstituer un dégradé cohérent entre les extrémités fixes.
 </p>
 
 <div id="test"></div>
 
-
-<div style="text-align:center;">
+<div class="form">
 
   <p><strong>Lieu du test :</strong></p>
 
@@ -112,15 +147,6 @@ Réorganisez les pastilles pour reconstituer un dégradé cohérent.
     <option value="">-- Sélectionner un site --</option>
     <option value="Grillon">Grillon</option>
     <option value="Saint-Paul-3-Châteaux">Saint-Paul-3-Châteaux</option>
-    
-select {
-  padding: 12px 15px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  margin: 5px;
-  font-size: 14px;
-}
-
   </select>
 
   <br><br>
@@ -129,8 +155,6 @@ select {
   <input id="prenom" placeholder="Prénom">
 
 </div>
-
-
 
 <div style="text-align:center;">
   <button onclick="check()">Valider</button>
@@ -142,16 +166,15 @@ select {
 </div>
 
 <script>
+
 let rowsData = [];
 let dragged;
 let lastScore = 0;
-
 let testDiv = document.getElementById("test");
 
 let starts = [0, 72, 144, 216, 288];
 
 function createRow(startHue) {
-
   let row = document.createElement("div");
   row.className = "row";
 
@@ -167,7 +190,6 @@ function createRow(startHue) {
   let middle = hues.slice(1, -1).sort(() => Math.random() - 0.5);
 
   function createColor(hue, fixed = false) {
-
     let div = document.createElement("div");
     div.className = "color";
 
@@ -183,14 +205,13 @@ function createRow(startHue) {
     div.addEventListener("drop", () => {
       if (div !== dragged && !div.classList.contains("fixed")) {
 
-        let temp = div.style.background;
-        let tempHue = div.dataset.hue;
+        let temp = div.dataset.hue;
 
-        div.style.background = dragged.style.background;
         div.dataset.hue = dragged.dataset.hue;
+        dragged.dataset.hue = temp;
 
-        dragged.style.background = temp;
-        dragged.dataset.hue = tempHue;
+        div.style.background = `hsl(${div.dataset.hue},100%,50%)`;
+        dragged.style.background = `hsl(${dragged.dataset.hue},100%,50%)`;
       }
     });
 
@@ -211,6 +232,13 @@ starts.forEach(h => {
 });
 
 function check() {
+
+  let lieu = document.getElementById("lieu").value;
+
+  if (!lieu) {
+    alert("Veuillez sélectionner un lieu");
+    return;
+  }
 
   let score = 0;
   let total = 0;
@@ -238,7 +266,6 @@ function check() {
   sendToExcel(percent);
 }
 
-/* ✅ ENVOI VERS TON EXCEL */
 function sendToExcel(score){
 
   let now = new Date();
@@ -249,16 +276,17 @@ function sendToExcel(score){
     score: score,
     date: now.toLocaleDateString(),
     heure: now.toLocaleTimeString(),
-    lieu: "Saint-Paul"
+    lieu: document.getElementById("lieu").value
   };
 
-fetch("https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnRbVCGLbjBOvh0IuBbALke2FNEiT7Zsw5Vddo_AMTSX70Eima2FVRdPtQ_yoOV_XxvZa-ETF4DJyrr1LSfvS2b6SUoJbY8_VL8mh7tasjdpW9j3knfAJrinubbykDvfN_ywX2lu9ayPKBaoGC9dTXduO9ZFbIe_OBFtt59JTHsusu3lbn5j104n2NstlleK6xdT2V0p_0zYJSUuFs2Pr9iADf-2EpfRVTjn1Fw8uAfJbDMxoZt_BB2QVWX-wvNu6J5SW7Hzs1XspHNEIBw421CnPZZi3A&lib=M9CCRG_6FKY-UIBu6ebALMKKr128tNxL1", {
-  method: "POST",
-  mode: "no-cors",
-  body: JSON.stringify(data)
-});
+  fetch("https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnRbVCGLbjBOvh0IuBbALke2FNEiT7Zsw5Vddo_AMTSX70Eima2FVRdPtQ_yoOV_XxvZa-ETF4DJyrr1LSfvS2b6SUoJbY8_VL8mh7tasjdpW9j3knfAJrinubbykDvfN_ywX2lu9ayPKBaoGC9dTXduO9ZFbIe_OBFtt59JTHsusu3lbn5j104n2NstlleK6xdT2V0p_0zYJSUuFs2Pr9iADf-2EpfRVTjn1Fw8uAfJbDMxoZt_BB2QVWX-wvNu6J5SW7Hzs1XspHNEIBw421CnPZZi3A&lib=M9CCRG_6FKY-UIBu6ebALMKKr128tNxL1", {
+    method: "POST",
+    mode: "no-cors",
+    body: JSON.stringify(data)
+  });
 
 }
+
 </script>
 
 </body>
