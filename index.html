@@ -813,9 +813,11 @@ function sendToSheets(score) {
     heure: now.toLocaleTimeString(),
     lieu: document.getElementById("lieu").value
   };
-  fetch("https://script.google.com/macros/s/AKfycbyXGRFPb-OjPIhYqZsvCAT-O1SYm0RO-e3yIg-9_uQIrcxcBAtdN3Ht2z5J4d9IjRCX/exec" + new URLSearchParams(data))
-    .catch(err => console.error(err));
-}
+  fetch("https://script.google.com/macros/s/AKfycbyNjOjtzIO0gQxxpFgfAELZcYmAf_ACbHjrBlR1I8kOgAbsD4r_cvLLC2JPd8DmwVhH/exec?" + new URLSearchParams(data), {
+  method: "GET",
+  mode: "no-cors"
+});
+``
 
 function sendToExcel(score) {
 
