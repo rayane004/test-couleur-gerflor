@@ -228,10 +228,12 @@ function sendToExcel(score){
     lieu: "Usine Gerflor"
   };
 
-  fetch("https://script.google.com/macros/s/AKfycby0vhVQ3XtM2r1EZyE9GI_hODZOX0GclBKU1mqhil8EGTSOvPgJ5wJIpH-ZOnhH_2gv/exec", {
-    method: "POST",
-    body: JSON.stringify(data)
-  });
+fetch("https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnRbVCGLbjBOvh0IuBbALke2FNEiT7Zsw5Vddo_AMTSX70Eima2FVRdPtQ_yoOV_XxvZa-ETF4DJyrr1LSfvS2b6SUoJbY8_VL8mh7tasjdpW9j3knfAJrinubbykDvfN_ywX2lu9ayPKBaoGC9dTXduO9ZFbIe_OBFtt59JTHsusu3lbn5j104n2NstlleK6xdT2V0p_0zYJSUuFs2Pr9iADf-2EpfRVTjn1Fw8uAfJbDMxoZt_BB2QVWX-wvNu6J5SW7Hzs1XspHNEIBw421CnPZZi3A&lib=M9CCRG_6FKY-UIBu6ebALMKKr128tNxL1", {
+  method: "POST",
+  mode: "no-cors",
+  body: JSON.stringify(data)
+});
+
 }
 </script>
 
