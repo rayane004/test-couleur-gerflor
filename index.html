@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Test Farnsworth - GERFLOR</title>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Segoe UI", sans-serif;
+  background: linear-gradient(120deg, #eef3f9, #dde6f2);
+}
+
+/* HEADER */
+header {
+  background: linear-gradient(90deg, #002b5c, #0051a8);
+  color: white;
+  text-align: center;
+  padding: 25px;
+}
+
+header h1 {
+  font-size: 24px;
+}
+
+/* CONTAINER */
+.container {
+  max-width: 1100px;
+  margin: 40px auto;
+}
+
+/* CARD */
+.card {
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+/* TEXT */
+.description {
+  color: #444;
+  margin-bottom: 25px;
+  line-height: 1.6;
+  text-align: center;
+}
+
+/* ROW */
+.row {
+  display: flex;
+  justify-content: center;
+  margin: 12px 0;
+}
+
+/* COLORS */
+.color {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  margin: 4px;
+  cursor: grab;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.color:hover {
+  transform: scale(1.2);
+  box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+}
+
+.fixed {
+  border: 3px solid black;
+  cursor: default;
+}
+
+/* FORM */
+.form {
+  margin-top: 25px;
+  text-align: center;
+}
+
+input {
+  padding: 12px 15px;
+  margin: 5px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  width: 200px;
+  transition: 0.2s;
+}
+
+input:focus {
+  border-color: #0051a8;
+  outline: none;
+}
+
+/* BUTTON */
+.btn {
+  margin-top: 20px;
+  padding: 14px 30px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #002b5c, #0051a8);
+  color: white;
+  font-size: 15px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn:hover {
+  background: linear-gradient(90deg, #0051a8, #007bff);
+}
+
+/* RESULT */
+#result {
+  margin-top: 25px;
+  text-align: center;
+  font-size: 22px;
+  font-weight: bold;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>Test de perception des couleurs</h1>
+</header>
+
+<div class="container">
+<div class="card">
+
+<p class="description">
+Ce test permet d’évaluer votre capacité à distinguer les nuances de couleurs.<br>
+Réorganisez les pastilles afin de reconstituer un dégradé cohérent entre les extrémités fixes.
+</p>
+
+<div id="test"></div>
+
+<div class="form">
+  <input id="nom" placeholder="Nom">
+  <input id="prenom" placeholder="Prénom">
+</div>
+
+<div style="text-align:center;">
+  <button class="btn" onclick="check()">Valider le test</button>
+  <button class="btn" onclick="download()">Télécharger le résultat</button>
+</div>
+
+<div id="result"></div>
+
+</div>
+</div>
+
+<script>
+let rowsData = [];
+let testDiv = document.getElementById("test");
+let dragged;
+let lastScore = 0;
+
+/* 5 lignes */
+let starts = [0, 72, 144, 216, 288];
+
+function createRow(startHue) {
+
+  let row = document.createElement("div");
+  row.className = "row";
+
+  let hues = [];
+
+  for (let i = 0; i < 20; i++) {
+    let h = (startHue + i * 3) % 360;
+    hues.push(h);
+  }
+
+  let first = hues[0];
+  let last = hues[hues.length - 1];
+
+  let middle = hues.slice(1, -1).sort(() => Math.random() - 0.5);
+
+  function createColor(hue, fixed=false){
+
+    let div = document.createElement("div");
+    div.className = "color";
+
+    if(fixed) div.classList.add("fixed");
+
+    div.style.background = `hsl(${hue},100%,50%)`;
+    div.draggable = !fixed;
+    div.dataset.hue = hue;
+
+    div.addEventListener("dragstart", () => dragged = div);
+    div.addEventListener("dragover", e => e.preventDefault());
+    div.addEventListener("drop", () => {
+
+      if(div !== dragged && !div.classList.contains("fixed")) {
+
+        let temp = div.style.background;
+        let tempHue = div.dataset.hue;
+
+        div.style.background = dragged.style.background;
+        div.dataset.hue = dragged.dataset.hue;
+
+        dragged.style.background = temp;
+        dragged.dataset.hue = tempHue;
+      }
+    });
+
+    return div;
+  }
+
+  row.appendChild(createColor(first, true));
+  middle.forEach(h => row.appendChild(createColor(h)));
+  row.appendChild(createColor(last, true));
+
+  return { row, hues };
+}
+
+starts.forEach(h => {
+  let r = createRow(h);
+  rowsData.push(r);
+  testDiv.appendChild(r.row);
+});
+
+function check() {
+
+  let score = 0;
+  let total = 0;
+
+  rowsData.forEach(r => {
+    let items = r.row.querySelectorAll(".color");
+
+    items.forEach((el, i) => {
+      let hue = parseInt(el.dataset.hue);
+      total++;
+
+      if (Math.abs(hue - r.hues[i]) < 5) score++;
+    });
+  });
+
+  let percent = Math.round((score / total) * 100);
+  lastScore = percent;
+
+  let message = percent + "%";
+
+  if (percent >= 90) message += " ✅ Conforme";
+  else message += " ❌ Non conforme";
+
+  document.getElementById("result").innerText = message;
+}
+
+function download(){
+  let nom = document.getElementById("nom").value;
+  let prenom = document.getElementById("prenom").value;
+
+  let text = "Nom: " + nom +
+             "\nPrénom: " + prenom +
+             "\nScore: " + lastScore + "%";
+
+  let blob = new Blob([text], {type:'text/plain'});
+  let a = document.createElement("a");
+
+  a.href = URL.createObjectURL(blob);
+  a.download = "resultat_test.txt";
+  a.click();
+}
+</script>
+
+</body>
+</html>
