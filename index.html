@@ -812,7 +812,7 @@ function sendToSheets(score) {
     heure: now.toLocaleTimeString(),
     lieu: document.getElementById("lieu").value
   };
-  fetch("https://script.google.com/macros/s/AKfycbyUVOkFMsrHLsGvSdDNWimkrCs23hjx8nP8dyGNjk2GkKLSPSGKxoBMDPBOHOr8AHNS/exec?" + new URLSearchParams(data))
+  fetch("https://script.google.com/macros/s/AKfycbz-ttQURheedKYQ2iDYqM25EUEJ1m08rQO_PKM1hiXznym0Hll7ttOKWXcgE0FIifzN0Q/exec?" + new URLSearchParams(data))
     .catch(err => console.error(err));
 }
 
