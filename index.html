@@ -802,6 +802,19 @@ function check() {
   }, 800);
 }
 
+function sendToSheets(score) {
+  const now = new Date();
+  const data = {
+    nom: document.getElementById("nom").value,
+    prenom: document.getElementById("prenom").value,
+    score: score,
+    date: now.toLocaleDateString(),
+    heure: now.toLocaleTimeString(),
+    lieu: document.getElementById("lieu").value
+  };
+  fetch("https://script.google.com/macros/s/AKfycbyUVOkFMsrHLsGvSdDNWimkrCs23hjx8nP8dyGNjk2GkKLSPSGKxoBMDPBOHOr8AHNS/exec?" + new URLSearchParams(data))
+    .catch(err => console.error(err));
+}
 
 function resetTest() {
   buildTest();
