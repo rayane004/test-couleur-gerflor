@@ -573,11 +573,40 @@ header::after {
 
 /* ── RESPONSIVE ── */
 @media (max-width: 640px) {
-  .header-inner { flex-direction: column; gap: 10px; padding: 16px 20px; }
+  .header-inner { flex-direction: column; gap: 8px; padding: 14px 16px; text-align: center; }
   .header-badge { display: none; }
-  .color { width: 28px; height: 28px; }
-  .row { gap: 3px; }
-  .test-area, .form-area, .actions { padding-left: 16px; padding-right: 16px; }
+  .header-logo { height: 36px; }
+  .header-center h1 { font-size: 16px; }
+  .header-center p { font-size: 11px; }
+
+  .container { padding: 16px 10px 40px; }
+
+  .steps { gap: 0; margin-bottom: 16px; }
+  .step { padding: 6px 8px; font-size: 11px; gap: 5px; }
+  .step span { display: none; }
+  .step-num { width: 22px; height: 22px; font-size: 10px; }
+  .step-divider { width: 20px; }
+
+  .card { border-radius: 16px; }
+
+  .instructions { padding: 10px 14px; gap: 8px; }
+  .instructions p { font-size: 12px; }
+  .instructions-icon { width: 26px; height: 26px; }
+
+  .test-area { padding: 16px 8px 12px; }
+
+  .color { width: 32px; height: 32px; }
+  .row { gap: 4px; margin: 5px 0; }
+
+  .form-area { padding: 16px 14px; }
+  .form-grid { grid-template-columns: 1fr; gap: 10px; }
+  .field input, .field select { padding: 13px 14px; font-size: 16px; }
+
+  .actions { padding: 8px 14px 24px; }
+  .btn-primary { width: 100%; padding: 15px; font-size: 15px; }
+  .btn-secondary { width: 100%; }
+  #result { max-width: 100%; }
+  .score-big { font-size: 40px; }
 }
 
 .color.touch-over {
@@ -842,49 +871,48 @@ function resetTest() {
 // ── TOUCH SUPPORT FOR MOBILE ──
 let touchDragged = null;
 let touchClone = null;
-let touchOriginHue = null;
+
+function cleanupTouch() {
+  if (touchClone) { touchClone.remove(); touchClone = null; }
+  if (touchDragged) { touchDragged.style.opacity = '1'; touchDragged = null; }
+  document.querySelectorAll('.color.touch-over').forEach(el => el.classList.remove('touch-over'));
+}
 
 document.addEventListener('touchstart', function(e) {
   const el = e.target.closest('.color:not(.fixed)');
   if (!el) return;
   e.preventDefault();
+  cleanupTouch();
 
   touchDragged = el;
-  touchOriginHue = el.dataset.hue;
 
-  // Create visual clone
-  touchClone = el.cloneNode(true);
-  touchClone.style.position = 'fixed';
-  touchClone.style.width = '44px';
-  touchClone.style.height = '44px';
-  touchClone.style.borderRadius = '50%';
-  touchClone.style.opacity = '0.85';
-  touchClone.style.pointerEvents = 'none';
-  touchClone.style.zIndex = '9999';
-  touchClone.style.boxShadow = '0 8px 24px rgba(0,0,0,0.4)';
-  touchClone.style.transform = 'scale(1.2)';
-  touchClone.style.transition = 'none';
+  touchClone = document.createElement('div');
+  touchClone.style.cssText = 'position:fixed;width:40px;height:40px;border-radius:50%;opacity:0.9;pointer-events:none;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,0.4);transform:scale(1.15);transition:none;';
+  touchClone.style.background = el.style.background;
   document.body.appendChild(touchClone);
 
-  el.style.opacity = '0.35';
+  el.style.opacity = '0.3';
 
   const touch = e.touches[0];
-  touchClone.style.left = (touch.clientX - 22) + 'px';
-  touchClone.style.top = (touch.clientY - 22) + 'px';
+  touchClone.style.left = (touch.clientX - 20) + 'px';
+  touchClone.style.top = (touch.clientY - 20) + 'px';
 
 }, { passive: false });
 
 document.addEventListener('touchmove', function(e) {
-  if (!touchDragged) return;
+  if (!touchDragged || !touchClone) return;
   e.preventDefault();
 
   const touch = e.touches[0];
-  touchClone.style.left = (touch.clientX - 22) + 'px';
-  touchClone.style.top = (touch.clientY - 22) + 'px';
+  touchClone.style.left = (touch.clientX - 20) + 'px';
+  touchClone.style.top = (touch.clientY - 20) + 'px';
 
-  // Highlight target
   document.querySelectorAll('.color.touch-over').forEach(el => el.classList.remove('touch-over'));
+  
+  touchClone.style.display = 'none';
   const target = document.elementFromPoint(touch.clientX, touch.clientY);
+  touchClone.style.display = '';
+  
   const targetColor = target && target.closest('.color:not(.fixed)');
   if (targetColor && targetColor !== touchDragged) {
     targetColor.classList.add('touch-over');
@@ -896,11 +924,13 @@ document.addEventListener('touchend', function(e) {
   if (!touchDragged) return;
 
   const touch = e.changedTouches[0];
+  
+  if (touchClone) touchClone.style.display = 'none';
   const target = document.elementFromPoint(touch.clientX, touch.clientY);
-  const targetColor = target && target.closest('.color:not(.fixed)');
+  if (touchClone) touchClone.style.display = '';
 
+  const targetColor = target && target.closest('.color:not(.fixed)');
   if (targetColor && targetColor !== touchDragged) {
-    // Swap
     const tmpHue = targetColor.dataset.hue;
     targetColor.dataset.hue = touchDragged.dataset.hue;
     touchDragged.dataset.hue = tmpHue;
@@ -908,13 +938,11 @@ document.addEventListener('touchend', function(e) {
     touchDragged.style.background = 'hsl(' + touchDragged.dataset.hue + ',100%,50%)';
   }
 
-  // Cleanup
-  touchDragged.style.opacity = '1';
-  document.querySelectorAll('.color.touch-over').forEach(el => el.classList.remove('touch-over'));
-  if (touchClone) { touchClone.remove(); touchClone = null; }
-  touchDragged = null;
+  cleanupTouch();
 
 }, { passive: false });
+
+document.addEventListener('touchcancel', cleanupTouch, { passive: true });
 </script>
 
 </body>
