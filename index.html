@@ -662,22 +662,8 @@ header::after {
     </div>
 
     <div class="test-area">
-
-  <div
-    id="rowCounter"
-    style="
-      text-align:center;
-      font-weight:600;
-      margin-bottom:20px;
-      color:var(--electric);
-    "
-  ></div>
-
-  <div id="singleRowContainer"></div>
-
-  <div id="reviewContainer" style="display:none"></div>
-
-</div>
+      <div id="test"></div>
+    </div>
 
     <hr class="divider">
 
@@ -707,14 +693,6 @@ header::after {
     </div>
 
     <div class="actions">
-      <button
-  class="btn-primary"
-  id="btnNextRow"
-  onclick="nextRow()"
-  style="margin-bottom:10px;"
->
-  Ligne suivante →
-</button>
       <button class="btn-primary" id="btnValider" onclick="check()">
         Valider le test
       </button>
@@ -726,8 +704,8 @@ header::after {
 </div>
 
 <script>
-let rowsData = [], dragged; let currentRowIndex = 0;
-const testDiv = document.getElementById("singleRowContainer");
+let rowsData = [], dragged;
+const testDiv = document.getElementById("test");
 const starts = [0, 72, 144, 216, 288];
 let dragCount = 0;
 
@@ -794,112 +772,17 @@ function createRow(startHue) {
   return { row, hues };
 }
 
-starts.forEach(h => {
-  const r = createRow(h);
-  rowsData.push(r);
-});
-
-currentRowIndex = 0;
-
-showCurrentRow();
-
-document.getElementById(
-  "reviewContainer"
-).style.display = "none";
-
-document.getElementById(
-  "singleRowContainer"
-).style.display = "block";
-
-document.getElementById(
-  "btnNextRow"
-).style.display = "inline-block";
-
-document.getElementById(
-  "btnValider"
-).style.display = "none";
-}
-function showCurrentRow() {
-
-  const container =
-    document.getElementById("singleRowContainer");
-
-  container.innerHTML = "";
-
-  container.appendChild(
-    rowsData[currentRowIndex].row
-  );
-
-  document.getElementById("rowCounter").innerHTML =
-    "Ligne " +
-    (currentRowIndex + 1) +
-    " / " +
-    rowsData.length;
-}
-
-function nextRow() {
-
-  if (currentRowIndex < rowsData.length - 1) {
-
-    currentRowIndex++;
-
-    showCurrentRow();
-
-  } else {
-
-    showReview();
-  }
-}
-
-function showReview() {
-
-  document.getElementById(
-    "singleRowContainer"
-  ).style.display = "none";
-
-  document.getElementById(
-    "btnNextRow"
-  ).style.display = "none";
-
-  document.getElementById(
-    "rowCounter"
-  ).innerHTML = "Révision finale";
-
-  const review =
-    document.getElementById(
-      "reviewContainer"
-    );
-
-  review.innerHTML = "";
-
-  rowsData.forEach((r, index) => {
-
-    const wrap =
-      document.createElement("div");
-
-    wrap.style.marginBottom = "20px";
-
-    const title =
-      document.createElement("h4");
-
-    title.textContent =
-      "Ligne " + (index + 1);
-
-    title.style.marginBottom = "10px";
-
-    wrap.appendChild(title);
-
-    wrap.appendChild(r.row);
-
-    review.appendChild(wrap);
+function buildTest() {
+  testDiv.innerHTML = "";
+  rowsData = [];
+  dragCount = 0;
+  starts.forEach(h => {
+    const r = createRow(h);
+    rowsData.push(r);
+    testDiv.appendChild(r.row);
   });
-
-  review.style.display = "block";
-
-  document.getElementById(
-    "btnValider"
-  ).style.display = "inline-block";
 }
+
 buildTest();
 updateProgress(10);
 
