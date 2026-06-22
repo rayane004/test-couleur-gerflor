@@ -880,7 +880,15 @@ function buildRosette(rowErrors) {
   return svg;
 }
 
-
+/* ══════════════════════════════════════════════
+   CONTEXT MESSAGE
+   ══════════════════════════════════════════════ */
+function contextMsg(key) {
+  if (key==='normal')     return {cls:'good',  title:'Excellente discrimination chromatique',   text:'Votre perception des couleurs est dans la norme ou au-dessus. Vous êtes apte à occuper des postes nécessitant une bonne acuité chromatique.'};
+  if (key==='low-normal') return {cls:'medium',title:'Discrimination chromatique légèrement réduite',text:"Votre résultat est légèrement en dessous de la moyenne pour votre tranche d'âge. Un bilan ophtalmologique peut être conseillé selon votre poste."};
+  return                         {cls:'bad',   title:'Discrimination chromatique insuffisante', text:'Votre résultat indique une difficulté à percevoir certaines nuances de couleurs. Un bilan ophtalmologique est recommandé avant d\'affecter ce poste.'};
+}
+  
 /* ══════════════════════════════════════════════
    CHECK (RÉSULTAT)
    ══════════════════════════════════════════════ */
